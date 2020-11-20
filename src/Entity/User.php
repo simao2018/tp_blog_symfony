@@ -65,9 +65,39 @@ class User
      */
     private $roles;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="user")
+     */
+    private $comments;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Article::class, mappedBy="user")
+     */
+    private $articlesWritten;
+
+    // /**
+    //  * @ORM\ManyToMany(targetEntity=Article::class, inversedBy="usersLike")
+    //  */
+    // private $liked;
+
+    // /**
+    //  * @ORM\ManyToMany(targetEntity=Article::class, inversedBy="usersShare")
+    //  */
+    // private $shared;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="user")
+     */
+    private $messages;
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->articlesWritten = new ArrayCollection();
+        $this->liked = new ArrayCollection();
+        $this->shared = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -191,6 +221,144 @@ class User
     public function removeRole(Role $role): self
     {
         $this->roles->removeElement($role);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Comment[]
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getUser() === $this) {
+                $comment->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Article[]
+     */
+    public function getArticlesWritten(): Collection
+    {
+        return $this->articlesWritten;
+    }
+
+    public function addArticlesWritten(Article $articlesWritten): self
+    {
+        if (!$this->articlesWritten->contains($articlesWritten)) {
+            $this->articlesWritten[] = $articlesWritten;
+            $articlesWritten->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArticlesWritten(Article $articlesWritten): self
+    {
+        if ($this->articlesWritten->removeElement($articlesWritten)) {
+            // set the owning side to null (unless already changed)
+            if ($articlesWritten->getUser() === $this) {
+                $articlesWritten->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    // /**
+    //  * @return Collection|Article[]
+    //  */
+    // public function getLiked(): Collection
+    // {
+    //     return $this->liked;
+    // }
+
+    // public function addLiked(Article $liked): self
+    // {
+    //     if (!$this->liked->contains($liked)) {
+    //         $this->liked[] = $liked;
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeLiked(Article $liked): self
+    // {
+    //     $this->liked->removeElement($liked);
+
+    //     return $this;
+    // }
+
+    // /**
+    //  * @return Collection|Article[]
+    //  */
+    // public function getShared(): Collection
+    // {
+    //     return $this->shared;
+    // }
+
+    // public function addShared(Article $shared): self
+    // {
+    //     if (!$this->shared->contains($shared)) {
+    //         $this->shared[] = $shared;
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeShared(Article $shared): self
+    // {
+    //     $this->shared->removeElement($shared);
+
+    //     return $this;
+    // }
+
+    /**
+     * @return Collection|Message[]
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getUser() === $this) {
+                $message->setUser(null);
+            }
+        }
 
         return $this;
     }
