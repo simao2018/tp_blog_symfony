@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ArticleRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -61,7 +62,7 @@ class Article
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="articlesWritten")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $user;
 
@@ -80,6 +81,7 @@ class Article
         $this->comments = new ArrayCollection();
         $this->usersLike = new ArrayCollection();
         $this->usersShare = new ArrayCollection();
+        $this->createdAt = new DateTime();
     }
 
     public function getId(): ?int
@@ -212,58 +214,4 @@ class Article
 
         return $this;
     }
-
-    // /**
-    //  * @return Collection|User[]
-    //  */
-    // public function getUsersLike(): Collection
-    // {
-    //     return $this->usersLike;
-    // }
-
-    // public function addUsersLike(User $usersLike): self
-    // {
-    //     if (!$this->usersLike->contains($usersLike)) {
-    //         $this->usersLike[] = $usersLike;
-    //         $usersLike->addLiked($this);
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function removeUsersLike(User $usersLike): self
-    // {
-    //     if ($this->usersLike->removeElement($usersLike)) {
-    //         $usersLike->removeLiked($this);
-    //     }
-
-    //     return $this;
-    // }
-
-    // /**
-    //  * @return Collection|User[]
-    //  */
-    // public function getUsersShare(): Collection
-    // {
-    //     return $this->usersShare;
-    // }
-
-    // public function addUsersShare(User $usersShare): self
-    // {
-    //     if (!$this->usersShare->contains($usersShare)) {
-    //         $this->usersShare[] = $usersShare;
-    //         $usersShare->addShared($this);
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function removeUsersShare(User $usersShare): self
-    // {
-    //     if ($this->usersShare->removeElement($usersShare)) {
-    //         $usersShare->removeShared($this);
-    //     }
-
-    //     return $this;
-    // }
 }
