@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
-class User
+class User implements UserInterface
 {
     /**
      * @ORM\Id
@@ -34,6 +35,10 @@ class User
      */
     private $password;
 
+
+    /**
+     * @Assert\EqualTo(propertyPath="password", message="Vous n'avez pas tapez le meme mot de passe")
+     */
     public $confirm_password;
 
     public function getId(): ?int
@@ -76,4 +81,14 @@ class User
 
         return $this;
     }
+
+    public function eraseCredentials() {}
+
+    public function getSalt () {}
+
+    public function getRoles() {
+        return ['ROLE_USER'];
+    }
+
+
 }
