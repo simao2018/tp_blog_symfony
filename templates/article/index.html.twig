@@ -1,20 +1,53 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ArticleController!{% endblock %}
+{% block title %}Bienvenue sur SportBlog{% endblock %}
 
 {% block body %}
 <style>
     .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .art{
+        font-size:16px;
+        padding-bottom:5px;
+    }
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <div class="row justify-content-between">
+        <div class="col-sm-2">
+            <span class="dropdown">
+                <button class="btn btn-secondary-outline dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Trier par
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <button class="dropdown-item" type="button">Auteur</button>
+                    <button class="dropdown-item" type="button">Date de publication</button>
+                    <button class="dropdown-item" type="button">Titre A/Z</button>
+                </div>
+            </span>
+        </div> 
+        <div class="col-sm-5">
+            <form>
+               <input type="text" class="form-control" placeholder="Rechercher">
+            </form>
+        </div>    
+    </div>
+    {% if isArticle == false %}
+        <div class="alert alert-danger mt-5" role="alert">
+            Aucun article
+        </div>
+    {% else %}
+    <div class="row justify-content-center mt-1 art">
+        {% for article in pagination %}
+            {% include "article/_article.html.twig" %}
+        {% endfor %}
+    </div>
+    <div class="row justify-content-center mt-2 art">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+    
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/Users/chancel/Sites/localhost/blog/src/Controller/ArticleController.php'|file_link(0) }}">src/Controller/ArticleController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/Users/chancel/Sites/localhost/blog/templates/article/index.html.twig'|file_link(0) }}">templates/article/index.html.twig</a></code></li>
-    </ul>
+    {% endif %}
+    
 </div>
 {% endblock %}
