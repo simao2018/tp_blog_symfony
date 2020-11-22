@@ -18,9 +18,6 @@
                     {{article.content}}
                 </p>
             </div>
-            <div class="row mt-1" style="padding-left:20px;">
-                <span class="col-1"><a href="#"><i class="far fa-heart">Like</i></a></span> 
-                <span class="col-1 offset-1"><a href="#"><i class="far fa-share-square">Share</i></a></span>
-            </div>
+            {% include "article/_like_share.html.twig" %}
             
         </div>
