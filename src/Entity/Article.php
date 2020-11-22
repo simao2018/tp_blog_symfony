@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ArticleRepository;
+use Cocur\Slugify\Slugify;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -92,6 +93,10 @@ class Article
     public function getTitle(): ?string
     {
         return $this->title;
+    }
+    public function getSlug(): string
+    {
+        return (new Slugify())->slugify($this->getTitle());
     }
 
     public function setTitle(string $title): self
