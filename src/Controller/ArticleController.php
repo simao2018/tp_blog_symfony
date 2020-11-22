@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Repository\ArticleRepository;
-use Knp\Component\Pager\Paginator;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,6 +47,21 @@ class ArticleController extends AbstractController
             'articles' => $getArticle,
             'isArticle' => $isArticle,
             'pagination' => $db_articles
+        ]);
+    }
+    /**
+     * @Route("/article/{slug}/{id}", name="article.show", requirements={"slug": "[a-z0-9\-]*"})
+     * @return Response
+     */
+    public function show($slug, $id, ArticleRepository $articleRepository): Response
+    {
+
+
+
+        $article = $articleRepository->find($id);
+
+        return $this->render("article/article.html.twig", [
+            'article' => $article
         ]);
     }
 }
