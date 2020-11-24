@@ -1,0 +1,35 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <div class="container mt-5">
+        <div class="row">
+            <h1>Write a new article</h1>
+        </div>
+        <form action="get" class="row justify-content-center">
+            <div class="col-sm-7 form-group">
+                <input type="text" class="form-control" placeholder="titre de l'article">
+            </div>
+            <div class="col-sm-7 form-group">
+                <textarea class="form-control" rows="5"></textarea>
+                <hr>
+            </div>
+            <div class="col-sm-7">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Choose file</label>
+                </div>
+                <br> <br>
+            </div>
+            <div class="col-sm-7 form-group">
+                <input type="text" class="form-control" placeholder="categorie">
+                <br>
+            </div>
+            <div class="col-sm-7 form-group">
+                <input type="date" class="form-control" placeholder="date">
+            </div>
+            <div class="col-sm-7">
+                <input type="reset" class="btn btn-outline-secondary" value="Annuler">
+                <input type="submit" class="btn btn-primary" value="Envoyer">
+            </div>
+        </form>
+    </div>
+{% endblock %}
