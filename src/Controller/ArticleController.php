@@ -64,4 +64,16 @@ class ArticleController extends AbstractController
             'article' => $article
         ]);
     }
+
+    /**
+     * 
+     * @Route("/newArticle", name="newArticle")
+     */
+    public function newArticle(): Response
+    {
+        return $this->render(
+            'article/new_article.html.twig',
+            ['new' => 'article']
+        );
+    }
 }
