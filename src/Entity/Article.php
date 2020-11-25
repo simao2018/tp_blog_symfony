@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\ArticleRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinTable;
+use Doctrine\ORM\Mapping\JoinColumn;
+use App\Repository\ArticleRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=ArticleRepository::class)
@@ -60,20 +62,23 @@ class Article
     private $comments;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="articlesWritten")
+     * @ORM\ManyToOne(targetEntity=User::class)
      * @ORM\JoinColumn(nullable=false)
+     * 
      */
-    private $user;
+    private $author;
 
-    // /**
-    //  * @ORM\ManyToMany(targetEntity=User::class, mappedBy="liked")
-    //  */
-    // private $usersLike;
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class,  mappedBy="liked")
+     * @JoinTable(name="users_article_like")
+     */
+    private $usersLike;
 
-    // /**
-    //  * @ORM\ManyToMany(targetEntity=User::class, mappedBy="shared")
-    //  */
-    // private $usersShare;
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="shared")
+     * @JoinTable(name="users_article_share")
+     */
+    private $usersShare;
 
     public function __construct()
     {
@@ -201,69 +206,69 @@ class Article
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getAuthor(): ?User
     {
-        return $this->user;
+        return $this->author;
     }
 
-    public function setUser(?User $user): self
+    public function setAuthor(?User $user): self
     {
-        $this->user = $user;
+        $this->author = $user;
 
         return $this;
     }
 
-    // /**
-    //  * @return Collection|User[]
-    //  */
-    // public function getUsersLike(): Collection
-    // {
-    //     return $this->usersLike;
-    // }
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsersLike(): Collection
+    {
+        return $this->usersLike;
+    }
 
-    // public function addUsersLike(User $usersLike): self
-    // {
-    //     if (!$this->usersLike->contains($usersLike)) {
-    //         $this->usersLike[] = $usersLike;
-    //         $usersLike->addLiked($this);
-    //     }
+    public function addUsersLike(User $usersLike): self
+    {
+        if (!$this->usersLike->contains($usersLike)) {
+            $this->usersLike[] = $usersLike;
+            $usersLike->addLiked($this);
+        }
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
-    // public function removeUsersLike(User $usersLike): self
-    // {
-    //     if ($this->usersLike->removeElement($usersLike)) {
-    //         $usersLike->removeLiked($this);
-    //     }
+    public function removeUsersLike(User $usersLike): self
+    {
+        if ($this->usersLike->removeElement($usersLike)) {
+            $usersLike->removeLiked($this);
+        }
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
-    // /**
-    //  * @return Collection|User[]
-    //  */
-    // public function getUsersShare(): Collection
-    // {
-    //     return $this->usersShare;
-    // }
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsersShare(): Collection
+    {
+        return $this->usersShare;
+    }
 
-    // public function addUsersShare(User $usersShare): self
-    // {
-    //     if (!$this->usersShare->contains($usersShare)) {
-    //         $this->usersShare[] = $usersShare;
-    //         $usersShare->addShared($this);
-    //     }
+    public function addUsersShare(User $usersShare): self
+    {
+        if (!$this->usersShare->contains($usersShare)) {
+            $this->usersShare[] = $usersShare;
+            $usersShare->addShared($this);
+        }
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
-    // public function removeUsersShare(User $usersShare): self
-    // {
-    //     if ($this->usersShare->removeElement($usersShare)) {
-    //         $usersShare->removeShared($this);
-    //     }
+    public function removeUsersShare(User $usersShare): self
+    {
+        if ($this->usersShare->removeElement($usersShare)) {
+            $usersShare->removeShared($this);
+        }
 
-    //     return $this;
-    // }
+        return $this;
+    }
 }

@@ -2,16 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping\JoinTable;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  */
-class User
+class User implements UserInterface
 {
     /**
      * @ORM\Id
@@ -70,20 +73,26 @@ class User
      */
     private $comments;
 
+    // /**
+    //  * @ORM\OneToMany(targetEntity=Article::class, mappedBy="author")
+    //  * @JoinTable(name="users_articles_written",
+    //  *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
+    //  *      inverseJoinColumns={@JoinColumn(name="article_id", referencedColumnName="id")}
+    //  *      )
+    //  */
+    // private $articlesWritten;
+
     /**
-     * @ORM\OneToMany(targetEntity=Article::class, mappedBy="user")
+     * @ORM\ManyToMany(targetEntity=Article::class, inversedBy="usersLike")
+     * @JoinTable(name="users_article_like")
      */
-    private $articlesWritten;
+    private $liked;
 
-    // /**
-    //  * @ORM\ManyToMany(targetEntity=Article::class, inversedBy="usersLike")
-    //  */
-    // private $liked;
-
-    // /**
-    //  * @ORM\ManyToMany(targetEntity=Article::class, inversedBy="usersShare")
-    //  */
-    // private $shared;
+    /**
+     * @ORM\ManyToMany(targetEntity=Article::class, inversedBy="usersShare")
+     * @JoinTable(name="users_article_share")
+     */
+    private $shared;
 
     /**
      * @ORM\OneToMany(targetEntity=Message::class, mappedBy="user")
@@ -98,6 +107,33 @@ class User
         $this->liked = new ArrayCollection();
         $this->shared = new ArrayCollection();
         $this->messages = new ArrayCollection();
+    }
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUsername(): string
+    {
+        return (string) $this->email;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getSalt()
+    {
+        // not needed when using the "bcrypt" algorithm in security.yaml
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
     public function getId(): ?int
@@ -255,83 +291,83 @@ class User
         return $this;
     }
 
-    /**
-     * @return Collection|Article[]
-     */
-    public function getArticlesWritten(): Collection
-    {
-        return $this->articlesWritten;
-    }
+    // /**
+    //  * @return Collection|Article[]
+    //  */
+    // public function getArticlesWritten(): Collection
+    // {
+    //     return $this->articlesWritten;
+    // }
 
-    public function addArticlesWritten(Article $articlesWritten): self
-    {
-        if (!$this->articlesWritten->contains($articlesWritten)) {
-            $this->articlesWritten[] = $articlesWritten;
-            $articlesWritten->setUser($this);
-        }
+    // public function addArticlesWritten(Article $articlesWritten): self
+    // {
+    //     if (!$this->articlesWritten->contains($articlesWritten)) {
+    //         $this->articlesWritten[] = $articlesWritten;
+    //         $articlesWritten->setAuthor($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function removeArticlesWritten(Article $articlesWritten): self
     {
         if ($this->articlesWritten->removeElement($articlesWritten)) {
             // set the owning side to null (unless already changed)
-            if ($articlesWritten->getUser() === $this) {
-                $articlesWritten->setUser(null);
+            if ($articlesWritten->getAuthor() === $this) {
+                $articlesWritten->setAuthor(null);
             }
         }
 
         return $this;
     }
 
-    // /**
-    //  * @return Collection|Article[]
-    //  */
-    // public function getLiked(): Collection
-    // {
-    //     return $this->liked;
-    // }
+    /**
+     * @return Collection|Article[]
+     */
+    public function getLiked(): Collection
+    {
+        return $this->liked;
+    }
 
-    // public function addLiked(Article $liked): self
-    // {
-    //     if (!$this->liked->contains($liked)) {
-    //         $this->liked[] = $liked;
-    //     }
+    public function addLiked(Article $liked): self
+    {
+        if (!$this->liked->contains($liked)) {
+            $this->liked[] = $liked;
+        }
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
-    // public function removeLiked(Article $liked): self
-    // {
-    //     $this->liked->removeElement($liked);
+    public function removeLiked(Article $liked): self
+    {
+        $this->liked->removeElement($liked);
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
-    // /**
-    //  * @return Collection|Article[]
-    //  */
-    // public function getShared(): Collection
-    // {
-    //     return $this->shared;
-    // }
+    /**
+     * @return Collection|Article[]
+     */
+    public function getShared(): Collection
+    {
+        return $this->shared;
+    }
 
-    // public function addShared(Article $shared): self
-    // {
-    //     if (!$this->shared->contains($shared)) {
-    //         $this->shared[] = $shared;
-    //     }
+    public function addShared(Article $shared): self
+    {
+        if (!$this->shared->contains($shared)) {
+            $this->shared[] = $shared;
+        }
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
-    // public function removeShared(Article $shared): self
-    // {
-    //     $this->shared->removeElement($shared);
+    public function removeShared(Article $shared): self
+    {
+        $this->shared->removeElement($shared);
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
     /**
      * @return Collection|Message[]
