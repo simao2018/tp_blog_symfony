@@ -2,16 +2,22 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
+use App\Repository\UserRepository;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * @ORM\Table(name="`user`")
+ * @UniqueEntity(
+ *  fields={"email"},
+ *  message="Email deja existant"
+ * )
  */
-class User
+class User implements UserInterface
 {
     /**
      * @ORM\Id
@@ -22,83 +28,31 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Email()
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $firstName;
+    private $username;
 
     /**
      * @ORM\Column(type="string", length=255)
-     */
-    private $lastName;
-
-    /**
-     * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min="8", minMessage="Votre mot de passe doit faire au minimum 8 caractères", allowEmptyString = false)
      */
     private $password;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $phoneNumber;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @Assert\EqualTo(propertyPath="password", message="Vous n'avez pas tapez le meme mot de passe")
      */
-    private $createdAt;
+    public $confirm_password;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="json")
      */
-    private $updateAt;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $deletedAt;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Role::class, inversedBy="users")
-     */
-    private $roles;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="user")
-     */
-    private $comments;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Article::class, mappedBy="user")
-     */
-    private $articlesWritten;
-
-    // /**
-    //  * @ORM\ManyToMany(targetEntity=Article::class, inversedBy="usersLike")
-    //  */
-    // private $liked;
-
-    // /**
-    //  * @ORM\ManyToMany(targetEntity=Article::class, inversedBy="usersShare")
-    //  */
-    // private $shared;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="user")
-     */
-    private $messages;
-
-    public function __construct()
-    {
-        $this->roles = new ArrayCollection();
-        $this->comments = new ArrayCollection();
-        $this->articlesWritten = new ArrayCollection();
-        $this->liked = new ArrayCollection();
-        $this->shared = new ArrayCollection();
-        $this->messages = new ArrayCollection();
-    }
+    private $roles = [];
 
     public function getId(): ?int
     {
@@ -117,26 +71,14 @@ class User
         return $this;
     }
 
-    public function getFirstName(): ?string
+    public function getUsername(): ?string
     {
-        return $this->firstName;
+        return $this->username;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setUsername(string $username): self
     {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    public function getLastName(): ?string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(string $lastName): self
-    {
-        $this->lastName = $lastName;
+        $this->username = $username;
 
         return $this;
     }
@@ -153,213 +95,26 @@ class User
         return $this;
     }
 
-    public function getPhoneNumber(): ?string
+    public function eraseCredentials() {}
+
+    public function getSalt () {}
+
+    public function getRoles(): array
     {
-        return $this->phoneNumber;
+        $roles = $this->roles;
+    // garantit que chaque utilisateur possède le rôle ROLE_USER
+    // équvalent à array_push() qui ajoute un élément au tabeau
+          $roles[] = 'ROLE_USER'; 
+    //array_unique élémine des doublons      
+        return array_unique($roles);
     }
 
-    public function setPhoneNumber(?string $phoneNumber): self
+    public function setRoles(array $roles): self
     {
-        $this->phoneNumber = $phoneNumber;
+        $this->roles = $roles;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdateAt(): ?\DateTimeInterface
-    {
-        return $this->updateAt;
-    }
-
-    public function setUpdateAt(?\DateTimeInterface $updateAt): self
-    {
-        $this->updateAt = $updateAt;
-
-        return $this;
-    }
-
-    public function getDeletedAt(): ?\DateTimeInterface
-    {
-        return $this->deletedAt;
-    }
-
-    public function setDeletedAt(?\DateTimeInterface $deletedAt): self
-    {
-        $this->deletedAt = $deletedAt;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Role[]
-     */
-    public function getRoles(): Collection
-    {
-        return $this->roles;
-    }
-
-    public function addRole(Role $role): self
-    {
-        if (!$this->roles->contains($role)) {
-            $this->roles[] = $role;
-        }
-
-        return $this;
-    }
-
-    public function removeRole(Role $role): self
-    {
-        $this->roles->removeElement($role);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Comment[]
-     */
-    public function getComments(): Collection
-    {
-        return $this->comments;
-    }
-
-    public function addComment(Comment $comment): self
-    {
-        if (!$this->comments->contains($comment)) {
-            $this->comments[] = $comment;
-            $comment->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeComment(Comment $comment): self
-    {
-        if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
-            if ($comment->getUser() === $this) {
-                $comment->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Article[]
-     */
-    public function getArticlesWritten(): Collection
-    {
-        return $this->articlesWritten;
-    }
-
-    public function addArticlesWritten(Article $articlesWritten): self
-    {
-        if (!$this->articlesWritten->contains($articlesWritten)) {
-            $this->articlesWritten[] = $articlesWritten;
-            $articlesWritten->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeArticlesWritten(Article $articlesWritten): self
-    {
-        if ($this->articlesWritten->removeElement($articlesWritten)) {
-            // set the owning side to null (unless already changed)
-            if ($articlesWritten->getUser() === $this) {
-                $articlesWritten->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    // /**
-    //  * @return Collection|Article[]
-    //  */
-    // public function getLiked(): Collection
-    // {
-    //     return $this->liked;
-    // }
-
-    // public function addLiked(Article $liked): self
-    // {
-    //     if (!$this->liked->contains($liked)) {
-    //         $this->liked[] = $liked;
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function removeLiked(Article $liked): self
-    // {
-    //     $this->liked->removeElement($liked);
-
-    //     return $this;
-    // }
-
-    // /**
-    //  * @return Collection|Article[]
-    //  */
-    // public function getShared(): Collection
-    // {
-    //     return $this->shared;
-    // }
-
-    // public function addShared(Article $shared): self
-    // {
-    //     if (!$this->shared->contains($shared)) {
-    //         $this->shared[] = $shared;
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function removeShared(Article $shared): self
-    // {
-    //     $this->shared->removeElement($shared);
-
-    //     return $this;
-    // }
-
-    /**
-     * @return Collection|Message[]
-     */
-    public function getMessages(): Collection
-    {
-        return $this->messages;
-    }
-
-    public function addMessage(Message $message): self
-    {
-        if (!$this->messages->contains($message)) {
-            $this->messages[] = $message;
-            $message->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMessage(Message $message): self
-    {
-        if ($this->messages->removeElement($message)) {
-            // set the owning side to null (unless already changed)
-            if ($message->getUser() === $this) {
-                $message->setUser(null);
-            }
-        }
-
-        return $this;
-    }
 }
