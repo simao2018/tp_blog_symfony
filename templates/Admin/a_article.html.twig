@@ -1,0 +1,38 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-between">
+            <div class="col-sm-6"> <h1>Gerer les articles</h1></div>
+            <div class="col-sm-6">
+                <a href="{{ path('admin.article.new') }}" class="btn btn-warning text-right">Nouvel article</a>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for article in db_articles %}
+                <tr>
+                    <td>{{ article.title }}</td>
+                    <td>
+                        <a href="{{ path('admin.article.edit', {id: article.id}) }}" class="btn btn-secondary">Editer</a>
+                        <form method="post" action="{{ path('admin.article.delete',{id: article.id}) }}" style="display: inline-block;" onsubmit="return confirm('Voulez vous vraiment supprimer ?')">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
+                            <button class="btn btn-danger">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="row justify-content-center mt-2 art">
+            {{ knp_pagination_render(db_articles) }}
+        </div>
+
+    </div>
+{% endblock %}

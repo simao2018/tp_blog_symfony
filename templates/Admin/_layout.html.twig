@@ -1,0 +1,13 @@
+<div class="row justify-content-center">
+    <div class="col-sm-12">
+        {{ form_start(form)}}
+        <div class="row">
+            <div class="col-sm-7">{{ form_row(form.title) }}</div>
+            <div class="col-sm-7">{{ form_row(form.content) }}</div>
+            <div class="col-sm-7">{{ form_row(form.category) }}</div>
+            <div class="col-sm-6">{{ form_row(form.image) }}</div>
+        </div>
+        <button class="btn btn-success">{{button |default('Ajouter') }}</button>
+        {{ form_end(form) }}
+    </div>
+</div>
