@@ -22,12 +22,12 @@ security:
             form_login:
                 login_path: security_login
                 check_path: security_login
-                default_target_path: home
+                default_target_path: article
             
             
             logout:
                 path: security_logout
-                target: home
+                target: article
 
 
             # activate different ways to authenticate
