@@ -1,5 +1,7 @@
 # SportBlog by Web-Full Stackers
 
+- Lien Compte Rendu PDF : https://teams.microsoft.com/l/file/C7CC0695-9A9B-4884-BCA9-7C2EDEADEDDF?tenantId=38e72bba-3c22-4382-9323-ac1612931297&fileType=pdf&objectUrl=https%3A%2F%2Fauvencecom.sharepoint.com%2Fteams%2FGROUPE-GroupeWeb-FullStackers%2FDocuments%20partages%2FGeneral%2FCompte-rendu%20Web-Full%20Stackers%20SportBlog.pdf&baseUrl=https%3A%2F%2Fauvencecom.sharepoint.com%2Fteams%2FGROUPE-GroupeWeb-FullStackers&serviceName=teams&threadId=19:b6bd3cdbf1594f22b5daa134db014edd@thread.tacv2&groupId=0aaba248-7a8d-48ba-8dd6-50ba5f663885 
+
 - Lien du Backlog du projet : https://whimsical.com/backlog-done-PTFZSeXcbMFoas7JH7wJN3
 
 - Lien du prototype Adobe XD : https://xd.adobe.com/view/3fadcc70-1e38-4433-8a6e-318258280c4e-6afe/?fullscreen
