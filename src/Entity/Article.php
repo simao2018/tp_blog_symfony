@@ -67,6 +67,11 @@ class Article
      */
     private $user;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $validated = false;
+
     // /**
     //  * @ORM\ManyToMany(targetEntity=User::class, mappedBy="liked")
     //  */
@@ -216,6 +221,18 @@ class Article
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getValidated(): ?bool
+    {
+        return $this->validated;
+    }
+
+    public function setValidated(?bool $validated): self
+    {
+        $this->validated = $validated;
 
         return $this;
     }

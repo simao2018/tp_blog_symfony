@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller;
 
 use App\Entity\Article;
 use App\Form\ArticleType;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class AdminArticleController extends AbstractController {
+class UserArticleController extends AbstractController {
     /**
      * @var ArticleRepository
      */
@@ -22,25 +22,28 @@ class AdminArticleController extends AbstractController {
 
     public function __construct(ArticleRepository $repository){
             $this->repository = $repository;
+
     }
+
     /**
      *
-     * @Route("/admin", name="admin.article.index")
+     * @Route("/user/article", name="user.article.index")
      * */
     public function index(PaginatorInterface $paginator,Request $req): Response
     {
         $articles = $this->repository->findAll();
+        dump($this->getUser()->getId());
         $db_query = $this->getDoctrine()->getRepository(Article::class)->findBy([], ['createdAt' => 'desc']);
         $db_articles = $paginator->paginate(
             $db_query,
             $req->query->getInt('page', 1),
             6
         );
-        return $this->render('Admin/a_article.html.twig',compact('db_articles'));
+        return $this->render('user/a_article.html.twig',compact('db_articles'));
     }
     /**
      *
-     *@Route("/admin/article/create", name="admin.article.new")
+     *@Route("/user/article/create", name="article.new")
      */
     public function new(Request $request){
         $article = new Article();
@@ -49,16 +52,16 @@ class AdminArticleController extends AbstractController {
         if($form->isSubmitted() && $form->isValid()){
             $this->getDoctrine()->getManager()->persist($article);
             $this->getDoctrine()->getManager()->flush();
-            return $this->redirectToRoute('admin.article.index');
+            return $this->redirectToRoute('user.article.index');
         }
-        return $this->render('Admin/new.html.twig',[
+        return $this->render('user/newArticle.html.twig',[
             'article' => $article,
             'form' => $form->createView()
         ]);
     }
     /**
      *
-     * @Route("/admin/article/{id}", name="admin.article.edit",methods="GET|POST")
+     * @Route("/user/article/{id}", name="user.article.edit",methods="GET|POST")
      */
     public function edit(Article $article,Request $request): Response
     {
@@ -66,35 +69,18 @@ class AdminArticleController extends AbstractController {
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             $this->getDoctrine()->getManager()->flush();
-            return $this->redirectToRoute('admin.article.index');
+            return $this->redirectToRoute('user.article.index');
         }
 
-        return $this->render('Admin/edit.html.twig',[
+        return $this->render('user/edit.html.twig',[
             'article' => $article,
             'form' => $form->createView()
         ]);
     }
-    /**
-     *
-     * @Route("/admin/article/{id}/validate", name="admin.article.validate")
-     */
-    public function approve(Request $request, $id): Response
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-        $article = $entityManager->getRepository(Article::class)->find($id);
 
-        if (!$article) {
-            throw $this->createNotFoundException(
-                'No Article found for id '.$id
-            );
-        }
-        $article->setValidated(true);
-        $entityManager->flush();
-        return $this->redirectToRoute('admin.article.index');
-    }
     /**
      *
-     * @Route("/admin/article/{id}", name="admin.article.delete", methods="DELETE")
+     * @Route("/user/article/{id}", name="user.article.delete", methods="DELETE")
      * @param Article $article
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
@@ -104,6 +90,6 @@ class AdminArticleController extends AbstractController {
             $this->getDoctrine()->getManager()->remove($article);
             $this->getDoctrine()->getManager()->flush();
         }
-        return $this->redirectToRoute('admin.article.index');
+        return $this->redirectToRoute('user.article.index');
     }
 }

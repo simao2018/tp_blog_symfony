@@ -4,7 +4,7 @@
         <div class="row justify-content-between">
             <div class="col-sm-6"> <h1>Gerer les articles</h1></div>
             <div class="col-sm-6">
-                <a href="{{ path('admin.article.new') }}" class="btn btn-warning text-right">Nouvel article</a>
+                <a href="{{ path('article.new') }}" class="btn btn-warning text-right">Nouvel article</a>
             </div>
         </div>
         <table class="table table-bordered">
@@ -19,15 +19,12 @@
                 <tr>
                     <td>{{ article.title }}</td>
                     <td>
-                        <a href="{{ path('admin.article.edit', {id: article.id}) }}" class="btn btn-secondary">Editer</a>
-                        <form method="post" action="{{ path('admin.article.delete',{id: article.id}) }}" style="display: inline-block;" onsubmit="return confirm('Voulez vous vraiment supprimer ?')">
+                        <a href="{{ path('user.article.edit', {id: article.id}) }}" class="btn btn-secondary">Editer</a>
+                        <form method="post" action="{{ path('user.article.delete',{id: article.id}) }}" style="display: inline-block;" onsubmit="return confirm('Voulez vous vraiment supprimer ?')">
                             <input type="hidden" name="_method" value="DELETE">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
                             <button class="btn btn-danger">Supprimer</button>
                         </form>
-                        {% if article.validated == false %}
-                        <a class="btn btn-primary" href="{{ path('admin.article.validate',{id: article.id}) }}">Approuver</a>
-                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

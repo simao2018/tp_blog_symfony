@@ -1,7 +1,7 @@
 <div class="col-sm-8 border rounded mt-4" style="padding-bottom:10px;">
             <div class="row mt-2">
                 <span class="col-sm-3">
-                    <p class="bg-secondary rounded" style="text-align:center;color:#fff;font-size:13px;">Category</p>
+                    <p class="bg-secondary rounded" style="text-align:center;color:#fff;font-size:13px;">{{ article.category.name|default("No category") }}</p>
                 </span>
                 <span class="col-sm-3">
                     {{ article.createdAt|date("m/d/Y") }}

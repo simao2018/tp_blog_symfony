@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Repository\ArticleRepository;
+use App\Repository\CategoryRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,16 +19,10 @@ class ArticleController extends AbstractController
     public function index(ArticleRepository $articleRepository, PaginatorInterface $paginator, Request $req): Response
     {
         $article = new Article;
-
-
         $em = $this->getDoctrine()->getManager();
-        // $em->persist($article);
-        // $em->flush();
-
-        $isArticle = true;
 
         $getArticle = $articleRepository->findAll();
-        $db_query = $this->getDoctrine()->getRepository(Article::class)->findBy([], ['createdAt' => 'desc']);
+        $db_query = $this->getDoctrine()->getRepository(Article::class)->findBy(['validated'=>true], ['createdAt' => 'desc']);
         $db_articles = $paginator->paginate(
             $db_query,
             $req->query->getInt('page', 1),
@@ -39,8 +34,6 @@ class ArticleController extends AbstractController
         } else {
             $isArticle = true;
         }
-
-        dump(sizeof($getArticle));
 
         return $this->render('article/index.html.twig', [
             'controller_name' => 'ArticleController',
@@ -56,24 +49,10 @@ class ArticleController extends AbstractController
     public function show($slug, $id, ArticleRepository $articleRepository): Response
     {
 
-
-
         $article = $articleRepository->find($id);
 
         return $this->render("article/article.html.twig", [
             'article' => $article
         ]);
-    }
-
-    /**
-     * 
-     * @Route("/newArticle", name="newArticle")
-     */
-    public function newArticle(): Response
-    {
-        return $this->render(
-            'article/new_article.html.twig',
-            ['new' => 'article']
-        );
     }
 }
